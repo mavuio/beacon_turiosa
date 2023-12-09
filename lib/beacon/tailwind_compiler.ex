@@ -264,13 +264,17 @@ defmodule Beacon.TailwindCompiler do
   # - umbrella app running from root
   # - umbrella app running from the web app
   defp beacon_content(tmp_dir) do
+    #mwuits 2023-12-10:removed plain files, already included in app.css
+    # ~s(
+    # './assets/js/**/*.js',
+    # './lib/*_web.ex',
+    # './lib/*_web/**/*.*ex',
+    # './apps/*_web/assets/**/*.js',
+    # './apps/*_web/lib/*_web.ex',
+    # './apps/*_web/lib/*_web/**/*.*ex',
+    # '#{tmp_dir}/*.template'
+    # )
     ~s(
-    './assets/js/**/*.js',
-    './lib/*_web.ex',
-    './lib/*_web/**/*.*ex',
-    './apps/*_web/assets/**/*.js',
-    './apps/*_web/lib/*_web.ex',
-    './apps/*_web/lib/*_web/**/*.*ex',
     '#{tmp_dir}/*.template'
     )
   end
