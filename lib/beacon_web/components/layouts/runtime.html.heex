@@ -8,6 +8,7 @@
       <%= render_page_title(assigns) %>
     </.live_title>
     <%= render_resource_links(assigns) %>
+    <link id="my_app_web-stylesheet" rel="stylesheet" href="/css/app.css" />
     <link id="beacon-runtime-stylesheet" rel="stylesheet" href={asset_path(@conn, :css)} />
     <script defer src={asset_path(@conn, :js)}>
     </script>
