@@ -69,7 +69,9 @@ defmodule Beacon.TailwindCompiler do
       Application.put_env(:tailwind, :version, default_tailwind_version)
     end
 
-    Application.put_env(:tailwind, :beacon_runtime, [])
+    #mwuits 2023-12-10: prevent this from removing runtime setup:
+    # Application.put_env(:tailwind, :beacon_runtime, [])
+
 
     tailwind_config
     |> EEx.eval_file(assigns: %{beacon_content: content})
@@ -151,6 +153,9 @@ defmodule Beacon.TailwindCompiler do
       args: #{inspect(args)}
       opts: #{inspect(opts)}
 
+      cmd:
+      #{Tailwind.bin_path()} #{Enum.join(args," ")}
+
     """)
 
     System.cmd(Tailwind.bin_path(), args, opts)
@@ -189,17 +194,23 @@ defmodule Beacon.TailwindCompiler do
         end)
       end),
       Task.async(fn ->
-        # parse from laoded pages (ETS) so it can fetch callback transformations
-        # thay may include additoinal stylesheet classes as the markdown parser does
-        Beacon.Router.dump_page_modules(site, fn {_site, path, page_module} ->
-          template =
-            page_module
-            |> Beacon.Template.render()
-            |> fetch_static()
-            |> List.to_string()
 
-          page_path = Path.join(tmp_dir, "#{site}_page_#{remove_special_chars(path)}.template")
-          File.write!(page_path, template)
+        Enum.map(Content.list_pages(site, per_page: :infinity), fn page ->
+          page_path = Path.join(tmp_dir, "#{site}_page_#{remove_special_chars(page.path)}.template")
+          File.write!(page_path, page.template)
+
+        #mwuits 2023-12-09:  this doas not contain proper values on online-edit, just contains :not_loaded
+        # # parse from laoded pages (ETS) so it can fetch callback transformations
+        # # thay may include additoinal stylesheet classes as the markdown parser does
+        # Beacon.Router.dump_page_modules(site, fn {_site, path, page_module} ->
+        #   template =
+        #     page_module
+        #     |> Beacon.Template.render()
+        #     |> fetch_static()
+        #     |> List.to_string()
+
+        #   page_path = Path.join(tmp_dir, "#{site}_page_#{remove_special_chars(path)}.template")
+        #   File.write!(page_path, "template for #{page_module}:"<>template)
           page_path
         end)
       end),
