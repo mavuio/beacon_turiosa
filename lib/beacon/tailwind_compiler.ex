@@ -303,7 +303,7 @@ defmodule Beacon.TailwindCompiler do
   defp random_dir, do: :crypto.strong_rand_bytes(12) |> Base.encode16()
 
   defp cleanup(tmp_dir, files) do
-    Enum.each(files, &File.rm/1)
-    File.rmdir(tmp_dir)
+    # Enum.each(files, &File.rm/1)
+    # File.rmdir(tmp_dir)
   end
 end
